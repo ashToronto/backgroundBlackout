@@ -49,3 +49,23 @@ First, run the development server:
 npm run dev
 
 ```
+
+## Project Visuals
+
+Here are some visuals from the project to give you a better understanding of the features and user interface:
+
+### Project Milestones
+
+![Milestone 1](public/project_images/milestone1.png)
+
+![Milestone 2](public/project_images/milestone2.png)
+
+![Milestone 3](public/project_images/milestone3.png)
+
+![Milestone 4](public/project_images/milestone4.png)
+
+### Replicate Dashboard
+
+![Replicate Dashboard for machine learning processes](public/project_images/replicateDash.png)
+
+The image above displays the Replicate dashboard used in the project for managing and monitoring the machine learning models that process the images.
