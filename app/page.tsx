@@ -8,6 +8,7 @@ export default function Home() {
   const [file, setFile] = useState<File | null>();
   const [error, setError] = useState("");
   const [outputImage, setOutputImage] = useState<string | null>(null);
+  const [base64image, setBase64Image] = useState<string | null>(null);
 
   const acceptedFileTypes = {
     "image/jpeg": [".jpeg .png"],
@@ -29,13 +30,23 @@ export default function Home() {
   };
 
   const handleSubmit = async () => {
-    // We're going to process the input image
-    // and generate the output image later here.
+    const response = await fetch("/api/replicate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ image: base64image }),
+    });
 
-    // For now, let's assume that we have
-    // an output image from https://via.placeholder.com/150
+    let result = await response.json();
+    console.log(result);
 
-    setOutputImage("https://via.placeholder.com/150");
+    if (result.error) {
+      setError(result.error);
+      return;
+    }
+
+    setOutputImage(result.output);
   };
 
   const onDrop = (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
@@ -51,6 +62,14 @@ export default function Home() {
     console.log(acceptedFiles);
     setError("");
     setFile(acceptedFiles[0]);
+
+    // convert file to base64
+    const reader = new FileReader();
+    reader.readAsDataURL(acceptedFiles[0]);
+    reader.onload = () => {
+      const binaryStr = reader.result as string;
+      setBase64Image(binaryStr);
+    };
   };
 
   return (
