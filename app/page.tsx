@@ -2,8 +2,10 @@
 "use client";
 import { useState } from "react";
 import Dropzone, { FileRejection } from "react-dropzone";
-import { FaTrashAlt } from "react-icons/fa";
+import { FaTrashAlt, FaDownload } from "react-icons/fa";
 import { ThreeDots } from "react-loader-spinner";
+
+import { saveAs } from "file-saver";
 
 export default function Home() {
   const [file, setFile] = useState<File | null>();
@@ -75,6 +77,10 @@ export default function Home() {
       const binaryStr = reader.result as string;
       setBase64Image(binaryStr);
     };
+  };
+
+  const handleDownload = () => {
+    saveAs(outputImage as string, `new ${file?.name}`);
   };
 
   return (
@@ -152,7 +158,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className='flex items-center justify-center'>
+            <div className='flex items-center justify-center relative'>
               {loading && (
                 <ThreeDots
                   height='60'
@@ -162,12 +168,21 @@ export default function Home() {
                   visible={true}
                 />
               )}
+
               {outputImage && (
-                <img
-                  src={outputImage}
-                  alt='output'
-                  className='object-cover w-full h-full'
-                />
+                <>
+                  <img
+                    src={outputImage}
+                    alt='output'
+                    className='object-cover w-full h-full'
+                  />
+                  <button
+                    className='absolute top-0 right-0 p-3 text-black bg-yellow-500'
+                    onClick={() => handleDownload()}
+                  >
+                    <FaDownload className='w-6 h-6 hover:scale-125 duration-300' />
+                  </button>
+                </>
               )}
             </div>
           </>
