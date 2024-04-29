@@ -3,12 +3,14 @@
 import { useState } from "react";
 import Dropzone, { FileRejection } from "react-dropzone";
 import { FaTrashAlt } from "react-icons/fa";
+import { ThreeDots } from "react-loader-spinner";
 
 export default function Home() {
   const [file, setFile] = useState<File | null>();
   const [error, setError] = useState("");
   const [outputImage, setOutputImage] = useState<string | null>(null);
   const [base64image, setBase64Image] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const acceptedFileTypes = {
     "image/jpeg": [".jpeg .png"],
@@ -30,6 +32,7 @@ export default function Home() {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     const response = await fetch("/api/replicate", {
       method: "POST",
       headers: {
@@ -43,10 +46,12 @@ export default function Home() {
 
     if (result.error) {
       setError(result.error);
+      setLoading(false);
       return;
     }
 
     setOutputImage(result.output);
+    setLoading(false);
   };
 
   const onDrop = (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
@@ -111,14 +116,15 @@ export default function Home() {
         {/* Submit button */}
         {file && (
           <div className='flex items-center justify-center mt-2'>
-            <div className='flex items-center justify-center mt-2'>
-              <button
-                onClick={handleSubmit}
-                className='text-white text-lg bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l rounded-lg px-4 py-2 text-center mb-2'
-              >
-                Remove background
-              </button>
-            </div>
+            <button
+              onClick={handleSubmit}
+              disabled={loading}
+              className={`text-white text-lg bg-gradient-to-r from-purple-500 to-pink-500 hover:bg-gradient-to-l rounded-lg px-4 py-2 text-center mb-2 ${
+                loading && "cursor-progress"
+              }`}
+            >
+              Remove background
+            </button>
           </div>
         )}
       </section>
@@ -147,6 +153,15 @@ export default function Home() {
             </div>
 
             <div className='flex items-center justify-center'>
+              {loading && (
+                <ThreeDots
+                  height='60'
+                  width='60'
+                  color='#eeeeee'
+                  ariaLabel='three-dots-loading'
+                  visible={true}
+                />
+              )}
               {outputImage && (
                 <img
                   src={outputImage}
